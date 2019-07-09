@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script   src="https://code.jquery.com/jquery-3.4.1.min.js"   integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="   crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="post-container"></div>
+    <div>
+        <span>
+            
+
+        </span>
+    </div>
+
+    <script>
+        $.ajax({
+            type:'GET',
+            url:'http://localhost:6789/api/posts',
+            success:function(items){
+                console.log(items);
+                for(let i=0;i<items.data.length;i++){
+                    $('.post-container').append(`
+                <img src="${items.data[i].image}">
+                <br>
+                `)
+                }
+             const totalPost=items.totalPost;
+             const perPage=5;
+             const pageNumber=Math.round(totalPost/perPage);
+             for(let i=0;i<=pageNumber;i++){
+                 $('span').append(`
+                 <button type='button' >${i+1}</button>
+                 `);
+             }   
+            },
+            error:function(err){
+                console.log(err);
+            }
+        });
+        $(document).on('click','button',function(event){
+            const pageNumber=$(this).text();
+            
+            $.ajax({
+                type:'GET',
+                url:`http://localhost:6789/api/posts?page=${pageNumber}`,
+                success:function(items){
+                    $('.post-container').empty();
+                    for(let i=0;i<items.data.length;i++){   
+                    $('.post-container').append(`
+                <img src="${items.data[i].image}">
+                <br>
+                `);
+                }
+                }
+            });
+
+        })
+        </script>
+</body>
+
+</html>
